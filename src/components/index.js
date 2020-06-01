@@ -1,3 +1,4 @@
 import HelloWorld from './HelloWorld';
+import Pokemon from './Pokemon';
 
-export { HelloWorld };
+export { HelloWorld, Pokemon };

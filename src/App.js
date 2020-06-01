@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { get } from 'lodash';
 
-import { HelloWorld } from '@/components';
+import { HelloWorld, Pokemon } from '@/components';
 import * as Actions from '@/store/actions';
 import './App.css';
 
 class App extends Component {
+  componentDidMount() {
+    const { getListPokemon } = this.props;
+    getListPokemon({ limit: 10, offset: 0 });
+  }
+
   handleIncreaseCounterAsync = () => {
     const { increaseCounterAsync } = this.props;
     increaseCounterAsync(2);
@@ -22,25 +28,21 @@ class App extends Component {
     decreaseCounter(1);
   };
 
-  render() {
-    const { counter } = this.props;
+  handleClickPokemon = data => {
+    console.log(data);
+  };
 
+  render() {
+    const { counter, listPokemon } = this.props;
+
+    const data = get(listPokemon, 'result.results', []);
     return (
       <div className="App">
         <HelloWorld />
-
-        <br />
-        <p>{counter}</p>
-
-        <button type="button" onClick={this.handleIncreaseCounterAsync}>
-          increase async
-        </button>
-        <button type="button" onClick={this.handleIncreaseCounter}>
-          increase
-        </button>
-        <button type="button" onClick={this.handleDecreaseCounter}>
-          decrease
-        </button>
+        {data.map(pokemon => (
+          <Pokemon data={pokemon} key={pokemon.name} onClickPokemonItem={this.handleClickPokemon} />
+        ))}
+        <Pokemon />
       </div>
     );
   }
@@ -49,6 +51,7 @@ class App extends Component {
 export default connect(
   state => ({
     counter: state.counter.counter,
+    listPokemon: state.pokemon.listPokemon,
   }),
   dispatch => ({
     dispatch,
